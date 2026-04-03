@@ -145,9 +145,8 @@
   }
 
   uploadZone.addEventListener('click', function (e) {
-    if (e.target.closest('.upload-btn') || e.target === uploadZone || e.target.closest('.upload-icon') || e.target.closest('.upload-text') || e.target.closest('.upload-subtext') || e.target.closest('.upload-limits')) {
-      fileInput.click();
-    }
+    if (e.target.closest('.upload-btn')) return;
+    fileInput.click();
   });
 
   fileInput.addEventListener('change', function () {
