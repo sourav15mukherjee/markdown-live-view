@@ -101,16 +101,45 @@
   function buildTabs() {
     tabsContainer.innerHTML = '';
     documents.forEach(function (doc, index) {
-      var tab = document.createElement('button');
+      var tab = document.createElement('div');
       tab.className = 'tab' + (index === activeTab ? ' active' : '');
-      tab.textContent = doc.name;
-      tab.addEventListener('click', function () {
+
+      var label = document.createElement('span');
+      label.textContent = doc.name;
+      label.addEventListener('click', function () {
         activeTab = index;
         buildTabs();
         renderActiveDocument();
       });
+      tab.appendChild(label);
+
+      var closeBtn = document.createElement('button');
+      closeBtn.className = 'tab-close';
+      closeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+      closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeTab(index);
+      });
+      tab.appendChild(closeBtn);
+
       tabsContainer.appendChild(tab);
     });
+  }
+
+  function closeTab(index) {
+    documents.splice(index, 1);
+
+    if (documents.length === 0) {
+      showUploader();
+      return;
+    }
+
+    if (activeTab >= documents.length) {
+      activeTab = documents.length - 1;
+    }
+
+    buildTabs();
+    renderActiveDocument();
   }
 
   function renderActiveDocument() {

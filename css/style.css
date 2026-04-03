@@ -173,7 +173,10 @@ body {
 }
 
 .tab {
-  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.5rem 0.65rem 1rem;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -195,6 +198,32 @@ body {
   color: var(--accent);
   border-bottom-color: var(--accent);
   background: var(--bg-white);
+}
+
+.tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all var(--transition);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.tab-close:hover {
+  background: var(--accent-light);
+  color: var(--text-primary);
+}
+
+.tab-close svg {
+  width: 12px;
+  height: 12px;
 }
 
 .btn-clear {
@@ -380,6 +409,83 @@ body {
   background: var(--bg-white);
 }
 
+.site-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.about-section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+  width: 100%;
+}
+
+.about-content {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  border: 1px solid var(--border);
+}
+
+.about-content h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.about-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.about-content p {
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+}
+
+.about-content ul {
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.about-content li {
+  margin-bottom: 0.35rem;
+  line-height: 1.6;
+}
+
+.about-content code {
+  background: var(--bg-secondary);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  color: var(--accent-hover);
+}
+
+.about-content a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition);
+}
+
+.about-content a:hover {
+  border-bottom-color: var(--accent);
+}
+
 @media (max-width: 640px) {
   .site-header {
     padding: 1.75rem 1rem 1.5rem;
@@ -409,5 +515,9 @@ body {
   .btn-clear {
     align-self: flex-end;
     margin-top: 0.5rem;
+  }
+
+  .about-content {
+    padding: 1.25rem;
   }
 }
