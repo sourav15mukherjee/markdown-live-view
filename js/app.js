@@ -244,7 +244,7 @@
   }
 
   uploadZone.addEventListener('click', function (e) {
-    if (e.target.closest('.upload-btn')) return;
+    if (e.target.closest('.upload-btn') || e.target.closest('#addFileInput')) return;
     fileInput.click();
   });
 
