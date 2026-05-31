@@ -160,6 +160,13 @@ body {
   gap: 0.5rem;
 }
 
+.viewer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 .tabs {
   display: flex;
   gap: 0.25rem;
@@ -226,6 +233,25 @@ body {
   height: 12px;
 }
 
+.tab-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  padding: 0.65rem 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-add:hover {
+  color: var(--accent);
+  background: var(--bg-tertiary);
+}
+
+.btn-edit,
 .btn-clear {
   display: flex;
   align-items: center;
@@ -241,6 +267,23 @@ body {
   flex-shrink: 0;
 }
 
+.btn-download {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-edit:hover,
+.btn-download:hover,
 .btn-clear:hover {
   border-color: var(--border-hover);
   color: var(--text-primary);
@@ -251,6 +294,53 @@ body {
   padding: 2rem;
   min-height: 400px;
   max-height: 75vh;
+  overflow-y: auto;
+}
+
+.document-pane {
+  min-height: 100%;
+}
+
+.editor-pane {
+  display: flex;
+  gap: 1rem;
+  min-height: 400px;
+  height: 65vh;
+}
+
+.editor-pane[hidden] {
+  display: none !important;
+}
+
+.editor-textarea {
+  flex: 1;
+  width: 50%;
+  min-height: 100%;
+  resize: none;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  color: var(--text-primary);
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.editor-textarea:focus {
+  border-color: var(--accent-light);
+}
+
+.editor-preview {
+  flex: 1;
+  width: 50%;
+  min-height: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
   overflow-y: auto;
 }
 
@@ -512,9 +602,20 @@ body {
     align-items: stretch;
   }
 
-  .btn-clear {
+  .viewer-actions {
     align-self: flex-end;
     margin-top: 0.5rem;
+  }
+
+  .editor-pane {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .editor-textarea,
+  .editor-preview {
+    width: 100%;
+    min-height: 250px;
   }
 
   .about-content {

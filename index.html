@@ -34,6 +34,7 @@
         <p class="upload-subtext">or</p>
         <label class="upload-btn" for="fileInput">Browse Files</label>
         <input type="file" id="fileInput" accept=".md,.markdown,.mdx" multiple hidden>
+        <input type="file" id="addFileInput" accept=".md,.markdown,.mdx" multiple hidden>
         <p class="upload-limits">Max 3 files, 5MB each, 15MB total</p>
       </div>
       <div class="error-message" id="errorMessage" hidden></div>
@@ -42,15 +43,38 @@
     <section class="viewer-section" id="viewerSection" hidden>
       <div class="viewer-header">
         <div class="tabs" id="tabs"></div>
-        <button class="btn-clear" id="clearBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-          Clear All
-        </button>
+        <div class="viewer-actions">
+          <button class="btn-edit" id="editBtn" title="Edit markdown">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edit
+          </button>
+          <button class="btn-download" id="downloadBtn" title="Download markdown file" hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 0-2-2v-4"></path>
+              <polyline points="7,10 12,15 17,10"></polyline>
+              <line x1="12" y1="15" y2="3" x2="12" x1="12"></line>
+            </svg>
+            Download
+          </button>
+          <button class="btn-clear" id="clearBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Clear All
+          </button>
+        </div>
       </div>
-      <div class="viewer-content" id="viewerContent"></div>
+      <div class="viewer-content" id="viewerContent">
+        <div class="document-pane" id="documentPane"></div>
+        <div class="editor-pane" id="editorPane" hidden>
+          <textarea class="editor-textarea" id="editorTextarea" placeholder="Type markdown here..."></textarea>
+          <div class="editor-preview markdown-body" id="editorPreview"></div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -66,7 +90,8 @@
       <h3>Features</h3>
       <ul>
         <li><strong>Drag &amp; Drop Upload</strong> — Instantly preview markdown with a simple drag and drop</li>
-        <li><strong>Multi-Document Tabs</strong> — View up to 3 markdown files side by side in tabs</li>
+        <li><strong>Multi-Document Tabs</strong> — View up to 3 markdown files side by side in tabs, with the ability to add more files incrementally</li>
+        <li><strong>Live Markdown Editor</strong> — Edit your markdown in-app and see changes rendered live</li>
         <li><strong>GitHub-Flavored Markdown</strong> — Full support for tables, code blocks, task lists, strikethrough, and more</li>
         <li><strong>Code Syntax Highlighting</strong> — Automatic language detection for code blocks</li>
         <li><strong>100% Client-Side</strong> — Your files never leave your browser. No server, no tracking</li>

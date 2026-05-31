@@ -7,15 +7,23 @@
 
   const uploadZone = document.getElementById('uploadZone');
   const fileInput = document.getElementById('fileInput');
+  const addFileInput = document.getElementById('addFileInput');
   const errorMessage = document.getElementById('errorMessage');
   const uploadSection = document.getElementById('uploadSection');
   const viewerSection = document.getElementById('viewerSection');
   const tabsContainer = document.getElementById('tabs');
   const viewerContent = document.getElementById('viewerContent');
   const clearBtn = document.getElementById('clearBtn');
+  const editBtn = document.getElementById('editBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const documentPane = document.getElementById('documentPane');
+  const editorPane = document.getElementById('editorPane');
+  const editorTextarea = document.getElementById('editorTextarea');
+  const editorPreview = document.getElementById('editorPreview');
 
   let documents = [];
   let activeTab = 0;
+  let editMode = false;
 
   marked.setOptions({
     breaks: true,
@@ -41,11 +49,12 @@
     }, 5000);
   }
 
-  function validateFiles(files) {
+  function validateFiles(files, isAppend) {
     if (files.length === 0) return false;
 
-    if (files.length > MAX_FILES) {
-      showError('Maximum ' + MAX_FILES + ' files allowed. You selected ' + files.length + '.');
+    var currentCount = isAppend ? documents.length : 0;
+    if (currentCount + files.length > MAX_FILES) {
+      showError('Maximum ' + MAX_FILES + ' files allowed. You currently have ' + currentCount + ' and selected ' + files.length + '.');
       return false;
     }
 
@@ -94,8 +103,12 @@
     viewerSection.hidden = true;
     documents = [];
     activeTab = 0;
+    editMode = false;
     tabsContainer.innerHTML = '';
-    viewerContent.innerHTML = '';
+    documentPane.innerHTML = '';
+    editorPane.hidden = true;
+    downloadBtn.hidden = true;
+    editBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Edit';
   }
 
   function buildTabs() {
@@ -108,6 +121,7 @@
       label.textContent = doc.name;
       label.addEventListener('click', function () {
         activeTab = index;
+        if (editMode) exitEditMode();
         buildTabs();
         renderActiveDocument();
       });
@@ -124,6 +138,17 @@
 
       tabsContainer.appendChild(tab);
     });
+
+    if (documents.length < MAX_FILES) {
+      var addTab = document.createElement('div');
+      addTab.className = 'tab tab-add';
+      addTab.title = 'Add markdown file';
+      addTab.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
+      addTab.addEventListener('click', function () {
+        addFileInput.click();
+      });
+      tabsContainer.appendChild(addTab);
+    }
   }
 
   function closeTab(index) {
@@ -138,17 +163,56 @@
       activeTab = documents.length - 1;
     }
 
+    if (editMode) exitEditMode();
     buildTabs();
     renderActiveDocument();
   }
 
   function renderActiveDocument() {
     if (documents.length === 0) return;
+    if (editMode) {
+      editorPreview.innerHTML = '<div class="markdown-body">' + renderMarkdown(documents[activeTab].content) + '</div>';
+      return;
+    }
     var doc = documents[activeTab];
-    viewerContent.innerHTML = '<div class="markdown-body">' + renderMarkdown(doc.content) + '</div>';
+    documentPane.innerHTML = '<div class="markdown-body">' + renderMarkdown(doc.content) + '</div>';
   }
 
-  async function handleFiles(files) {
+  function enterEditMode() {
+    if (documents.length === 0) return;
+    editMode = true;
+    documentPane.hidden = true;
+    editorPane.hidden = false;
+    editorTextarea.value = documents[activeTab].content;
+    editorPreview.innerHTML = '<div class="markdown-body">' + renderMarkdown(documents[activeTab].content) + '</div>';
+    downloadBtn.hidden = false;
+    editBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Done';
+  }
+
+  function exitEditMode() {
+    editMode = false;
+    editorPane.hidden = true;
+    documentPane.hidden = false;
+    downloadBtn.hidden = true;
+    editBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Edit';
+    renderActiveDocument();
+  }
+
+  function downloadDocument() {
+    if (documents.length === 0) return;
+    var doc = documents[activeTab];
+    var blob = new Blob([doc.content], { type: 'text/markdown' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = doc.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleFiles(files, isAppend) {
     errorMessage.hidden = true;
 
     var fileArray = Array.from(files).filter(function (f) {
@@ -160,11 +224,17 @@
       return;
     }
 
-    if (!validateFiles(fileArray)) return;
+    if (!validateFiles(fileArray, isAppend)) return;
 
     try {
-      documents = await Promise.all(fileArray.map(readFile));
-      activeTab = 0;
+      var newDocs = await Promise.all(fileArray.map(readFile));
+      if (isAppend) {
+        documents = documents.concat(newDocs);
+        activeTab = documents.length - newDocs.length;
+      } else {
+        documents = newDocs;
+        activeTab = 0;
+      }
       buildTabs();
       renderActiveDocument();
       showViewer();
@@ -180,8 +250,15 @@
 
   fileInput.addEventListener('change', function () {
     if (fileInput.files.length > 0) {
-      handleFiles(fileInput.files);
+      handleFiles(fileInput.files, false);
       fileInput.value = '';
+    }
+  });
+
+  addFileInput.addEventListener('change', function () {
+    if (addFileInput.files.length > 0) {
+      handleFiles(addFileInput.files, true);
+      addFileInput.value = '';
     }
   });
 
@@ -198,11 +275,29 @@
     e.preventDefault();
     uploadZone.classList.remove('drag-over');
     if (e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
+      handleFiles(e.dataTransfer.files, documents.length > 0);
     }
   });
 
   clearBtn.addEventListener('click', function () {
     showUploader();
+  });
+
+  editBtn.addEventListener('click', function () {
+    if (editMode) {
+      exitEditMode();
+    } else {
+      enterEditMode();
+    }
+  });
+
+  editorTextarea.addEventListener('input', function () {
+    if (!editMode || documents.length === 0) return;
+    documents[activeTab].content = editorTextarea.value;
+    editorPreview.innerHTML = '<div class="markdown-body">' + renderMarkdown(documents[activeTab].content) + '</div>';
+  });
+
+  downloadBtn.addEventListener('click', function () {
+    downloadDocument();
   });
 })();

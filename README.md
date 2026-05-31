@@ -5,6 +5,8 @@ A simple, beautiful web application to upload and render Markdown files. Built w
 ## Features
 
 - **Drag & drop** or browse to upload `.md` files
+- **Incremental uploads** via a "+" tab — add files one by one up to the limit
+- **Live markdown editor** with split-pane preview — toggle editing per tab
 - **Beautiful rendering** with GitHub-flavored Markdown support
 - **Tabbed interface** for viewing multiple documents (up to 3)
 - **Code syntax highlighting** via highlight.js
